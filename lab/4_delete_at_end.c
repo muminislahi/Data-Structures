@@ -1,3 +1,4 @@
+//does not include check for underflow
 #include <stdio.h>
 
 int main() {
