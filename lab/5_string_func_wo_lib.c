@@ -74,6 +74,29 @@ void str_reverse(char* array)
     printf("The final string is %s",array);
 }
 
+
+int str_compare(char* array,char *array2)
+{
+
+    int length1= str_len(array);
+    int length2=str_len(array2);
+    if (length1==length2)
+    {
+        for(int i=0;i<length1;i++)
+        {
+            if(array[i]!=array2[i])
+            {
+                return array[i]-array2[i];
+            }            
+        }
+        return 0;
+    }
+
+    else 
+        printf("The strings are not same\n");
+
+}
+
 int main() 
 {
 
@@ -84,7 +107,7 @@ int main()
     do 
     {
         printf("Which function do you want to use?\n");
-        printf("1) str length\n2) str copy\n3) str concatenate\n4) str reverse\n");
+        printf("1) str length\n2) str copy\n3) str concatenate\n4) str reverse\n5) str compare\n");
         printf("Enter the number against your choice. Enter 0 for termination\n");
 
         scanf("%d",&choice);
@@ -128,6 +151,28 @@ int main()
 
                 str_reverse(array);
                 break;
+
+            case 5: 
+            {    printf("Enter the first string\n");
+                fgets(array,sizeof(array),stdin);
+
+                printf("Enter the string to be compared to the previous string\n");
+                fgets(array_2,sizeof(array_2),stdin);
+
+                int compare=str_compare(array,array_2);
+                //check if braces are needed here since you have declared a var inside case
+                
+                if(compare==0)
+                    printf("The strings are same\n");
+
+                else if(compare==-1)
+                    printf("The strins are not same and sting 1 is lexographically smaller than string 2\n");
+
+                else if(compare==1)
+                    printf("The strings are not equal and string 1 is lexographically greater than string 2\n");
+
+                break;
+            }    
 
         }    
     }while(choice!=0);
