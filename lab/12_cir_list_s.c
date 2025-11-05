@@ -1,214 +1,248 @@
 #include <stdio.h>
 #include <stdlib.h>
-typedef struct nodes{
 
+typedef struct node
+{
     int data;
-    struct nodes *next;
+    struct node *next;
+} n;
 
-}n;
-
-
-n* cr_node(n *prev){
-
-    n *p =(n*) malloc(sizeof(n));
-
-    p->next=prev->next;
+n* createNode(n *prev)
+{
+    n *p = (n*) malloc(sizeof(n));
+    printf("Enter data for the node: ");
+    scanf("%d", &p->data);
+    p->next = prev->next;
     prev->next = p;
-
     return p;
 }
 
-n* trav(n* head, int final_node_num)
+n* traverse(n* head, int node_num)
 {
-    n* trav_ptr=head;
-    if(final_node_num<0)
+    if (head == NULL)
+        return NULL;
+
+    n* temp = head;
+
+    if (node_num < 0)
     {
-        while(trav_ptr->next!=head)
-            trav_ptr=trav_ptr->next;
-        
+        while (temp->next != head)
+            temp = temp->next;
     }
-    else 
+    else
     {
-        while(--final_node_num&&trav_ptr->next!=head)
-            trav_ptr=trav_ptr->next;
-        
+        while (--node_num && temp->next != head)
+            temp = temp->next;
     }
 
-    return trav_ptr;
+    return temp;
 }
 
-void ins_node(n **head, int node_num)
+void insertNode(n **head, int node_num)
 {
+    if (*head == NULL)
+        return;
 
-    n*trav_ptr=trav(*head,node_num);
-    n* x=cr_node(trav_ptr);
-    printf("ENter data for the node\n");
-    scanf("%d",&x->data);
+    n* trav_ptr = traverse(*head, node_num);
+    if (trav_ptr == NULL)
+        return;
 
-    if(trav_ptr->next== *head)
-    {
-        x->next=*head;
-    }
+    n* newNode = (n*) malloc(sizeof(n));
+    printf("Enter data for the node: ");
+    scanf("%d", &newNode->data);
+
+    newNode->next = trav_ptr->next;
+    trav_ptr->next = newNode;
 }
 
-void display_list(n* head)
+void deleteNode(n **head, int node_num)
 {
-    n* trav_ptr=head;
+    if (*head == NULL)
+        return;
 
-    while(trav_ptr->next!=head)
+    n *temp = *head, *prev = NULL;
+
+    if (node_num == 1)
     {
-        printf("%d\t",trav_ptr->data);
-        trav_ptr=trav_ptr->next;
-    }
-    printf("%d\t",trav_ptr->data);
+        if ((*head)->next == *head)
+        {
+            free(*head);
+            *head = NULL;
+            return;
+        }
 
+        while (temp->next != *head)
+            temp = temp->next;
+
+        n* del = *head;
+        temp->next = (*head)->next;
+        *head = (*head)->next;
+        free(del);
+        return;
+    }
+
+    if (node_num == -1)
+    {
+        while (temp->next->next != *head)
+            temp = temp->next;
+
+        n* del = temp->next;
+        temp->next = *head;
+        free(del);
+        return;
+    }
+
+    int count = 1;
+    while (count < node_num && temp->next != *head)
+    {
+        prev = temp;
+        temp = temp->next;
+        count++;
+    }
+
+    if (temp == *head)
+        return;
+
+    prev->next = temp->next;
+    free(temp);
 }
 
-void del_node(n** head,int node_num_to_del);
+void displayList(n* head)
+{
+    if (head == NULL)
+    {
+        printf("List is empty\n");
+        return;
+    }
 
-int main() {
+    n* temp = head;
+    while (temp->next != head)
+    {
+        printf("%d\t", temp->data);
+        temp = temp->next;
+    }
+    printf("%d\n", temp->data);
+}
 
-
-    n* head,*x;
+int main()
+{
+    n* head = NULL, *x;
     int menu_choice;
-    head=(n*)malloc(sizeof(n));
-    printf("Enter data for first node");
-    scanf("%d",&head->data);
-    x=head;
 
+    head = (n*) malloc(sizeof(n));
+    printf("Enter data for first node: ");
+    scanf("%d", &head->data);
+    head->next = head;
+    x = head;
 
     do
     {
-    printf("1] Create n nodes\n2] Insert a node\n3] Delete a node\n4]Display the list\n");
-    scanf("%d",&menu_choice);
+        printf("\n--- MENU ---\n");
+        printf("1] Create n nodes\n");
+        printf("2] Insert a node\n");
+        printf("3] Delete a node\n");
+        printf("4] Display the list\n");
+        printf("0] Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &menu_choice);
 
-    switch (menu_choice)
-    {
-        case 1:
+        switch (menu_choice)
         {
-            int cr_choice;
-            printf("How many nodes do you want to add\n");
-            scanf("%d",&cr_choice);
-            while(cr_choice--)
+            case 1:
             {
+                int count;
+                printf("How many nodes do you want to add: ");
+                scanf("%d", &count);
 
-                x=cr_node(x);
-                printf("Enter data for the node");
-                scanf("%d",&x->data);
-
-
-            }
-            x->next=head;
-            break;
-        }
-
-
-        case 2:
-        {
-            int ins_choice;
-            printf("1] Enter a node in the beginning\n2] Enter at the end\n3] Enter at any position\n");
-            scanf("%d",&ins_choice);
-
-            switch (ins_choice)
-            {
-                case 1:
+                while (count--)
                 {
-                    display_list(head);
-                    n* trav_ptr;
-                    n* a=(n*)malloc(sizeof(n));
-
-                    printf("ENter data for the node\n");
-                    scanf("%d",&a->data);
-
-                    a->next=head;
-
-                    trav_ptr=trav(head,-1);
-                    head=a;
-                    trav_ptr->next=head;
-                    break;
-                    
+                    x = createNode(x);
                 }
 
-                case 2:
-                {
-                    display_list(head);
-                    int node_num;
-                    printf("After which node number do you want to add a node?");
-                    scanf("%d",&node_num);
-                    ins_node(&head,node_num);
-                    break;
-
-                }
-
-                case 3:
-                {
-                    display_list(head);
-                    ins_node(&head,-1);
-                    break;
-                }
-            }
-            break;
-        }
-
-        case 3:
-        {
-            printf("1] Delete a node from the beginning\n2] Delete a node at the end\n3] Delete a node at any position\n");
-            int del_choice;
-            scanf("%d",&del_choice);
-
-            switch (del_choice)
-            {
-                case 1:
-                    del_node(&head,1);
-                    break;
-                case 2:
-                    del_node(&head,-1);
-                    break;
-                case 3:
-                {
-                    int node_num_to_del;
-                    printf("Enter the node number ot delete\n");
-                    scanf("%d",&node_num_to_del);
-
-                    del_node(&head,node_num_to_del);
-                    break;
-                }
+                x->next = head;
+                break;
             }
 
+            case 2:
+            {
+                int choice;
+                printf("1] Insert at beginning\n");
+                printf("2] Insert after a specific node\n");
+                printf("3] Insert at end\n");
+                printf("Enter your choice: ");
+                scanf("%d", &choice);
 
+                switch (choice)
+                {
+                    case 1:
+                    {
+                        n* newNode = (n*) malloc(sizeof(n));
+                        printf("Enter data for the node: ");
+                        scanf("%d", &newNode->data);
+
+                        n* last = traverse(head, -1);
+                        newNode->next = head;
+                        head = newNode;
+                        last->next = head;
+                        break;
+                    }
+
+                    case 2:
+                    {
+                        displayList(head);
+                        int node_num;
+                        printf("After which node number do you want to insert: ");
+                        scanf("%d", &node_num);
+                        insertNode(&head, node_num);
+                        break;
+                    }
+
+                    case 3:
+                    {
+                        insertNode(&head, -1);
+                        break;
+                    }
+                }
+                break;
+            }
+
+            case 3:
+            {
+                int choice;
+                printf("1] Delete from beginning\n");
+                printf("2] Delete from end\n");
+                printf("3] Delete from any position\n");
+                printf("Enter your choice: ");
+                scanf("%d", &choice);
+
+                switch (choice)
+                {
+                    case 1:
+                        deleteNode(&head, 1);
+                        break;
+
+                    case 2:
+                        deleteNode(&head, -1);
+                        break;
+
+                    case 3:
+                    {
+                        int pos;
+                        printf("Enter node position to delete: ");
+                        scanf("%d", &pos);
+                        deleteNode(&head, pos);
+                        break;
+                    }
+                }
+                break;
+            }
+
+            case 4:
+                displayList(head);
+                break;
         }
-
-        case 4:
-            display_list(head);
-            break;
     }
-
-    }while(menu_choice!=0);
-
+    while (menu_choice != 0);
 
     return 0;
-}
-
-
-void del_node(n** head,int node_num_to_del)
-{
-    n* trav_ptr=trav(*head,node_num_to_del-1);
-    n* node_to_free;
-
-
-    if(trav_ptr==*head)
-    {
-        node_to_free=trav_ptr;
-        n* tail=trav(*head,-1);
-        tail->next=trav_ptr->next;
-        *head=trav_ptr->next;
-    }
-
-    else 
-    {
-        node_to_free=trav_ptr->next;
-        trav_ptr->next=trav_ptr->next->next;//works for any position and end
-    }
-
-    free(node_to_free);
 }
